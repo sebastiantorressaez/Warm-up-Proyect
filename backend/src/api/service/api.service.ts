@@ -24,6 +24,7 @@ export class ApiService implements OnModuleInit {
         .pipe(map((response) => response.data)),
     );
 
+
     const validArticles = data.hits
       .filter((hit) => hit.title || hit.story_title)
       .map((hit) => ({
@@ -31,12 +32,14 @@ export class ApiService implements OnModuleInit {
         title: hit.story_title ?? hit.title,
         author: hit.author,
         createdAt: hit.created_at,
-        url: hit.story_url ?? hit.url ?? '',
+        url: hit.story_url ?? hit.url,
       }));
 
-    await Promise.all(
-      validArticles.map((article: CreateArticleDto) => {
-        return this.articlesService.createArticle(article);
+
+    await Promise.all( 
+      validArticles.map( async (article: CreateArticleDto) => {
+        const newArticle = await this.articlesService.findArticle(article.objectID);
+        if (!newArticle) this.articlesService.createArticle(article);
       })
     )
   }

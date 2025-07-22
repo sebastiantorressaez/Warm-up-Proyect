@@ -1,28 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Article, ArticleDocument } from '../schema/article.schema';
-import { Model } from 'mongoose';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { CreateArticleDto } from '../dto/create-article.dto';
+import { ArticlesRepository } from '../repository/articles.repository';
+import { ArticleDocument } from '../schema/article.schema';
 
 @Injectable()
 export class ArticlesService {
-  constructor(
-    @InjectModel(Article.name)
-    private readonly articleModel: Model<ArticleDocument>,
-  ) {}
+  constructor(private readonly articleRepository: ArticlesRepository) {}
 
-  createArticle(createArticleDto: CreateArticleDto) {
-    return this.articleModel.create(createArticleDto);
+  findArticles(paginationQuery: PaginationQueryDto): Promise<ArticleDocument[]> {
+    return this.articleRepository.findAll(paginationQuery);
   }
 
-  findAll(paginationQuery: PaginationQueryDto) {
-    const { limit, offset } = paginationQuery;
-    return this.articleModel
-      .find()
-      .skip(offset)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .exec();
+  findArticle(objectID: string): Promise<ArticleDocument | null> {
+    return this.articleRepository.findOne(objectID);
+  }
+
+  createArticle(createArticleDto: CreateArticleDto): Promise<ArticleDocument> {
+    return this.articleRepository.create(createArticleDto);
+  }
+
+  deteleArcticle(objectID: string): Promise<ArticleDocument | null> {
+    return this.articleRepository.delete(objectID);
   }
 }
