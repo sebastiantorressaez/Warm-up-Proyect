@@ -14,7 +14,6 @@ services:
       - mongo
     volumes:
       - ./backend:/app
-    command: npm run start:dev:poll
     environment:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
@@ -27,7 +26,6 @@ services:
       - backend
     volumes:
       - ./frontend:/app
-    command: npm run dev
     environment:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
