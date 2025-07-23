@@ -4,12 +4,14 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { firstValueFrom, map } from 'rxjs';
 import { ArticlesService } from '../../articles/service/articles.service';
 import { CreateArticleDto } from 'src/articles/dto/create-article.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ApiService implements OnModuleInit {
   constructor(
     private readonly httpService: HttpService,
     private readonly articlesService: ArticlesService,
+    private readonly configService: ConfigService,
   ) {}
 
   async onModuleInit() {
@@ -18,29 +20,19 @@ export class ApiService implements OnModuleInit {
 
   // @Cron(CronExpression.EVERY_HOUR)
   async getData() {
+    const api_url = this.configService.get('EXTERNAL_API_URL');
+
     const data = await firstValueFrom(
-      this.httpService
-        .get('https://hn.algolia.com/api/v1/search_by_date?query=nodejs')
-        .pipe(map((response) => response.data)),
+      this.httpService.get(api_url).pipe(map((response) => response.data)),
     );
 
-
-    const validArticles = data.hits
-      .filter((hit) => hit.title || hit.story_title)
-      .map((hit) => ({
-        objectID: hit.objectID,
-        title: hit.story_title ?? hit.title,
-        author: hit.author,
-        createdAt: hit.created_at,
-        url: hit.story_url ?? hit.url,
-      }));
-
-
-    await Promise.all( 
-      validArticles.map( async (article: CreateArticleDto) => {
-        const newArticle = await this.articlesService.findArticle(article.objectID);
+    await Promise.all(
+      data.hits.map(async (article: CreateArticleDto) => {
+        const newArticle = await this.articlesService.findArticle(
+          article.objectID,
+        );
         if (!newArticle) this.articlesService.createArticle(article);
-      })
-    )
+      }),
+    );
   }
 }

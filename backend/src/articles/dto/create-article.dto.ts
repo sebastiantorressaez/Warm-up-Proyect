@@ -11,7 +11,13 @@ export class CreateArticleDto {
   title: string;
 
   @IsString()
+  story_title: string;
+
+  @IsString()
   url: string;
+
+  @IsString()
+  story_url: string;
 
   @IsString()
   created_at: string;

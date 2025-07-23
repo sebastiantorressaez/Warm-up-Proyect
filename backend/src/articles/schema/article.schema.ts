@@ -12,6 +12,9 @@ export class Article {
   title: string;
 
   @Prop()
+  story_title: string;
+
+  @Prop()
   author: string;
 
   @Prop()
@@ -19,6 +22,9 @@ export class Article {
 
   @Prop()
   url: string;
+
+  @Prop()
+  story_url: string;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);
