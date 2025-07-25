@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConflictException, Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { firstValueFrom, map } from 'rxjs';
 import { ArticlesService } from '../../articles/service/articles.service';
@@ -15,24 +15,34 @@ export class ApiService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    await this.getData();
+    await this.handleApiDate();
+  }
+
+  getApiData() {
+    const api_url = this.configService.get('EXTERNAL_API_URL');
+
+    const data = firstValueFrom(
+      this.httpService.get(api_url).pipe(map((response) => response.data.hits)),
+    );
+
+    return data;
   }
 
   // @Cron(CronExpression.EVERY_HOUR)
-  async getData() {
-    const api_url = this.configService.get('EXTERNAL_API_URL');
+  async handleApiDate() {
+    const articles = await this.getApiData();
 
-    const data = await firstValueFrom(
-      this.httpService.get(api_url).pipe(map((response) => response.data)),
-    );
+    const promises = articles.map(async (article: CreateArticleDto) => {
+      try {
+        return await this.articlesService.createArticle(article);
+      } catch (error) {
+        if (error instanceof ConflictException) {
+          return null;
+        }
+        throw error;
+      }
+    });
 
-    await Promise.all(
-      data.hits.map(async (article: CreateArticleDto) => {
-        const newArticle = await this.articlesService.findArticle(
-          article.objectID,
-        );
-        if (!newArticle) this.articlesService.createArticle(article);
-      }),
-    );
+    return Promise.all(promises);
   }
 }

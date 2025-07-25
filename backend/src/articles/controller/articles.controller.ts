@@ -4,12 +4,11 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Query,
 } from '@nestjs/common';
 import { ArticlesService } from '../service/articles.service';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { ArticleDocument } from '../schema/article.schema';
 import { CreateArticleDto } from '../dto/create-article.dto';
 
 @Controller('articles')
@@ -17,22 +16,22 @@ export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
   @Get()
-  async findAll(@Query() paginationQuery: PaginationQueryDto) {
-    return this.articlesService.findArticles(paginationQuery);
+  findAll(): Promise<ArticleDocument[]> {
+    return this.articlesService.findArticles();
   }
 
   @Get(':objectID')
-  findOne(@Param('objectID', ParseIntPipe) id: number) {
-    return this.articlesService.findArticle('' + id);
+  findOne(@Param('objectID') objectID: string): Promise<ArticleDocument> {
+    return this.articlesService.findArticle(objectID);
   }
 
   @Post()
-  create(@Body() createArticleDto: CreateArticleDto) {
+  create(@Body() createArticleDto: CreateArticleDto): Promise<ArticleDocument> {
     return this.articlesService.createArticle(createArticleDto);
   }
 
   @Delete(':objectID')
-  delete(@Param('objectID') id: string) {
-    return this.articlesService.deteleArcticle(id);
+  delete(@Param('objectID') objectID: string): Promise<ArticleDocument | null> {
+    return this.articlesService.deleteArticle(objectID);
   }
 }

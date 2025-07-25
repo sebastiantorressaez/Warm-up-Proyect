@@ -18,13 +18,19 @@ export class Article {
   author: string;
 
   @Prop()
-  createdAt: Date;
-
-  @Prop()
   url: string;
 
   @Prop()
   story_url: string;
+
+  @Prop()
+  created_at: Date;
+
+  @Prop({ default: false })
+  isDetele: boolean;
+
+  @Prop({ default: null })
+  deleted_at: Date;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);

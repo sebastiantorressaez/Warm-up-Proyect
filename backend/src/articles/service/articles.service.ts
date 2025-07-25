@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArticleDto } from '../dto/create-article.dto';
 import { ArticlesRepository } from '../repository/articles.repository';
 import { ArticleDocument } from '../schema/article.schema';
@@ -8,19 +7,24 @@ import { ArticleDocument } from '../schema/article.schema';
 export class ArticlesService {
   constructor(private readonly articleRepository: ArticlesRepository) {}
 
-  findArticles(paginationQuery: PaginationQueryDto): Promise<ArticleDocument[]> {
-    return this.articleRepository.findAll(paginationQuery);
+  findArticles(): Promise<ArticleDocument[]> {
+    return this.articleRepository.findAll();
   }
 
-  findArticle(objectID: string): Promise<ArticleDocument | null> {
-    return this.articleRepository.findOne(objectID);
+  async findArticle(objectID: string): Promise<ArticleDocument> {
+    const article = await this.articleRepository.findOne(objectID);
+    if (!article) throw new NotFoundException(`Article #${objectID} not found`);
+    return article;
   }
 
-  createArticle(createArticleDto: CreateArticleDto): Promise<ArticleDocument> {
+  async createArticle(createArticleDto: CreateArticleDto): Promise<ArticleDocument> {
+    const exists = await this.articleRepository.findOne(createArticleDto.objectID);
+    if (exists) throw new ConflictException(`Article #${createArticleDto.objectID} already exists`);
     return this.articleRepository.create(createArticleDto);
   }
 
-  deteleArcticle(objectID: string): Promise<ArticleDocument | null> {
-    return this.articleRepository.delete(objectID);
+  async deleteArticle(objectID: string): Promise<ArticleDocument | null> {
+    await this.findArticle(objectID);
+    return this.articleRepository.softdelete(objectID);
   }
 }
