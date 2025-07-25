@@ -28,7 +28,7 @@ export class ApiService implements OnModuleInit {
     return data;
   }
 
-  // @Cron(CronExpression.EVERY_HOUR)
+  @Cron(CronExpression.EVERY_HOUR)
   async handleApiDate() {
     const articles = await this.getApiData();
 
