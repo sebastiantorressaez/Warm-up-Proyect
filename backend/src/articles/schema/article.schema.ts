@@ -24,13 +24,13 @@ export class Article {
   story_url: string;
 
   @Prop()
-  created_at: Date;
+  created_at: string;
 
   @Prop({ default: false })
-  isDetele: boolean;
+  isDeteled: boolean;
 
-  @Prop({ default: null })
-  deleted_at: Date;
+  @Prop({ type: String, default: null })
+  deleted_at: string | null;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);

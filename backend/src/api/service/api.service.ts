@@ -32,17 +32,19 @@ export class ApiService implements OnModuleInit {
   async handleApiDate() {
     const articles = await this.getApiData();
 
-    const promises = articles.map(async (article: CreateArticleDto) => {
-      try {
-        return await this.articlesService.createArticle(article);
-      } catch (error) {
-        if (error instanceof ConflictException) {
-          return null;
+    const resultPromises = Promise.all(
+      articles.map(async (article: CreateArticleDto) => {
+        try {
+          return await this.articlesService.createArticle(article);
+        } catch (error) {
+          if (error instanceof ConflictException) {
+            return null;
+          }
+          throw error;
         }
-        throw error;
-      }
-    });
+      }),
+    );
 
-    return Promise.all(promises);
+    return resultPromises;
   }
 }

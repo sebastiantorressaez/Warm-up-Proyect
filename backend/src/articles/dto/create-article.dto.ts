@@ -27,13 +27,13 @@ export class CreateArticleDto {
 
   @IsDateString()
   @IsNotEmpty()
-  created_at: Date;
+  created_at: string;
 
   @IsBoolean()
   @IsOptional()
-  isDetele: boolean;
+  isDeteled: boolean;
 
   @IsDateString()
   @IsOptional()
-  deleted_at: Date;
+  deleted_at: string | null;
 }
