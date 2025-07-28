@@ -29,8 +29,8 @@ export class Article {
   @Prop({ default: false })
   isDeteled: boolean;
 
-  @Prop({ type: String, default: null })
-  deleted_at: string | null;
+  @Prop({ default: null })
+  deleted_at: string;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);

@@ -3,13 +3,14 @@ import { ArticlesService } from './articles.service';
 import { ArticlesRepository } from '../repository/articles.repository';
 import {
   mockArticle,
-  mockCreateArticleDto,
+  mockArticleCreate,
 } from '../mock/articles-service.mock';
 
 describe('ArticlesService', () => {
   let service: ArticlesService;
 
   const mockRepo = {
+    findAll: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
     softdelete: jest.fn(),
@@ -30,6 +31,31 @@ describe('ArticlesService', () => {
     jest.clearAllMocks();
   });
 
+  describe('Test for findArticles', () => {
+    it('should return a list of articles when found', async () => {
+      mockRepo.findAll.mockReturnValueOnce([mockArticle]);
+
+      const result = await service.findArticles();
+
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBeTruthy();
+      expect(mockRepo.findAll).toHaveBeenCalled();
+      expect(result.length).toBeGreaterThan(0);
+    });
+
+    it('should throw NotFoundException when no articles exist', async () => {
+      mockRepo.findAll.mockReturnValueOnce([]);
+
+      try {
+        await service.findArticles();
+      } catch (error) {
+        expect(error).toBeDefined();
+        expect(mockRepo.findAll).toHaveBeenCalled();
+        expect(error.message).toBe('No articles found');
+      }
+    });
+  });
+
   describe('Test for findArticle', () => {
     it('should return article when objectID exists', async () => {
       mockRepo.findOne.mockReturnValueOnce(mockArticle);
@@ -38,14 +64,14 @@ describe('ArticlesService', () => {
 
       expect(result).toBeDefined();
       expect(result).toMatchObject(mockArticle);
-      expect(mockRepo.findOne).toBeCalled();
+      expect(mockRepo.findOne).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException when article with objectID does not exist', async () => {
       try {
         await service.findArticle('1111');
       } catch (error) {
-        expect(mockRepo.findOne).toBeCalled();
+        expect(mockRepo.findOne).toHaveBeenCalled();
         expect(error).toBeDefined();
         expect(error.message).toBe(`Article #1111 not found`);
       }
@@ -54,24 +80,24 @@ describe('ArticlesService', () => {
 
   describe('Test for createArticle', () => {
     it('should create article successfully when objectID does not exist', async () => {
-      mockRepo.create.mockReturnValueOnce(mockCreateArticleDto);
+      mockRepo.create.mockReturnValueOnce(mockArticleCreate);
 
-      const result = await service.createArticle(mockCreateArticleDto);
+      const result = await service.createArticle(mockArticleCreate);
 
       expect(result).toBeDefined();
-      expect(result).toMatchObject(mockCreateArticleDto);
-      expect(mockRepo.findOne).toBeCalled();
-      expect(mockRepo.create).toBeCalled();
+      expect(result).toMatchObject(mockArticleCreate);
+      expect(mockRepo.findOne).toHaveBeenCalled();
+      expect(mockRepo.create).toHaveBeenCalled();
     });
 
     it('should throw ConflictException when article with objectID already exists', async () => {
       try {
-        await service.createArticle(mockCreateArticleDto);
+        await service.createArticle(mockArticleCreate);
       } catch (error) {
-        expect(mockRepo.findOne).toBeCalled();
+        expect(mockRepo.findOne).toHaveBeenCalled();
         expect(error).toBeDefined();
         expect(error.message).toBe(
-          `Article #${mockCreateArticleDto.objectID} already exists`,
+          `Article #${mockArticleCreate.objectID} already exists`,
         );
       }
     });
@@ -86,15 +112,15 @@ describe('ArticlesService', () => {
 
       expect(result).toBeDefined();
       expect(result).toMatchObject(mockArticle);
-      expect(mockRepo.findOne).toBeCalled();
-      expect(mockRepo.softdelete).toBeCalled();
+      expect(mockRepo.findOne).toHaveBeenCalled();
+      expect(mockRepo.softdelete).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException when article with objectID does not exist', async () => {
       try {
         await service.deleteArticle(mockArticle.objectID);
       } catch (error) {
-        expect(mockRepo.findOne).toBeCalled();
+        expect(mockRepo.findOne).toHaveBeenCalled();
         expect(error).toBeDefined();
         expect(error.message).toBe(
           `Article #${mockArticle.objectID} not found`,

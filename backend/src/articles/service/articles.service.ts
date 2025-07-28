@@ -7,8 +7,10 @@ import { ArticleDocument } from '../schema/article.schema';
 export class ArticlesService {
   constructor(private readonly articleRepository: ArticlesRepository) {}
 
-  findArticles(): Promise<ArticleDocument[]> {
-    return this.articleRepository.findAll();
+  async findArticles(): Promise<ArticleDocument[]> {
+    const articles = await this.articleRepository.findAll();
+    if (!articles.length) throw new NotFoundException('No articles found');
+    return articles
   }
 
   async findArticle(objectID: string): Promise<ArticleDocument> {
