@@ -27,7 +27,7 @@ export class Article {
   created_at: string;
 
   @Prop({ default: false })
-  isDeteled: boolean;
+  is_deleted: boolean;
 
   @Prop({ default: null })
   deleted_at: string;

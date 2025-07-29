@@ -30,7 +30,7 @@ export class CreateArticleDto {
 
   @IsBoolean()
   @IsOptional()
-  isDeteled?: boolean;
+  is_deleted?: boolean;
 
   @IsDateString()
   @IsOptional()

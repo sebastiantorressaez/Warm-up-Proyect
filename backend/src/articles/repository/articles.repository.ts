@@ -11,11 +11,11 @@ export class ArticlesRepository {
   ) {}
 
   findAll(): Promise<ArticleDocument[]> {
-    return this.articlesModel.find({ isDeteled: false }).exec();
+    return this.articlesModel.find({ is_deleted: false }).exec();
   }
 
   findOne(objectID: string): Promise<ArticleDocument | null> {
-    return this.articlesModel.findOne({ objectID, isDeteled: false }).exec();
+    return this.articlesModel.findOne({ objectID, is_deleted: false }).exec();
   }
 
   create(article: CreateArticleDto): Promise<ArticleDocument> {
@@ -26,7 +26,7 @@ export class ArticlesRepository {
     return this.articlesModel
       .findOneAndUpdate(
         { objectID },
-        { isDeteled: true, deleted_at: new Date() },
+        { is_deleted: true, deleted_at: new Date() },
         { new: true },
       )
       .exec();

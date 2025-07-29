@@ -5,7 +5,7 @@ export const mockArticle = {
   author: 'ts_expert',
   story_url: 'https://www.typescriptlang.org/docs/handbook/generics.html',
   created_at: '2025-08-01T10:15:00.000+00:00',
-  isDeteled: false,
+  is_deleted: false,
   deleted_at: null,
   __v: 0,
 };
@@ -17,6 +17,6 @@ export const mockArticleCreate = {
   author: 'ts_expert',
   story_url: 'https://www.typescriptlang.org/docs/handbook/generics.html',
   created_at: '2025-08-01T10:15:00.000+00:00',
-  isDeteled: false,
+  is_deleted: false,
   deleted_at: undefined,
 };
