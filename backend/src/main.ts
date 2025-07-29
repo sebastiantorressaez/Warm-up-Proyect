@@ -15,11 +15,17 @@ async function bootstrap() {
     }),
   );
 
-  const front_url = configService.get('FRONT_URL');
   const port = configService.get('PORT');
 
   app.enableCors({
-    origin: [front_url],
+    origin: (origin, callback) => {
+      const allowedOrigins = [/^http:\/\/localhost(:\d{1,5})?$/];
+      if (!origin || allowedOrigins.some((o) => o.test(origin))) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'), false);
+      }
+    },
     methods: ['GET', 'POST', 'DELETE'],
     allowedHeaders: ['Content-Type'],
   });
