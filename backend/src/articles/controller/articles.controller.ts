@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ArticlesService } from '../service/articles.service';
 import { ArticleDocument } from '../schema/article.schema';
 import { CreateArticleDto } from '../dto/create-article.dto';
+import { ObjectIdParamDto } from '../dto/object-id-param.dto';
 
 @Controller('articles')
 export class ArticlesController {
@@ -13,8 +14,8 @@ export class ArticlesController {
   }
 
   @Get(':objectID')
-  findOne(@Param('objectID') objectID: string): Promise<ArticleDocument> {
-    return this.articlesService.findArticle(objectID);
+  findOne(@Param() params: ObjectIdParamDto): Promise<ArticleDocument> {
+    return this.articlesService.findArticle(params.objectID);
   }
 
   @Post()
@@ -23,7 +24,7 @@ export class ArticlesController {
   }
 
   @Delete(':objectID')
-  delete(@Param('objectID') objectID: string): Promise<ArticleDocument | null> {
-    return this.articlesService.deleteArticle(objectID);
+  delete(@Param() params: ObjectIdParamDto): Promise<ArticleDocument | null> {
+    return this.articlesService.deleteArticle(params.objectID);
   }
 }
