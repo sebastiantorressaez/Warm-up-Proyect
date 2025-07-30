@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import { WuproyectConfig } from './config/wu-proyect.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
+  const wuproyectConfig = app.get(WuproyectConfig);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -14,8 +14,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
-  const port = configService.get('PORT');
 
   app.enableCors({
     origin: (origin, callback) => {
@@ -30,6 +28,6 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type'],
   });
 
-  await app.listen(port);
+  await app.listen(wuproyectConfig.envConfig.port || 3000);
 }
 bootstrap();

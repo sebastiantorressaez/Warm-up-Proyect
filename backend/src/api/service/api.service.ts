@@ -5,13 +5,14 @@ import { firstValueFrom, map } from 'rxjs';
 import { ArticlesService } from '../../articles/service/articles.service';
 import { CreateArticleDto } from 'src/articles/dto/create-article.dto';
 import { ConfigService } from '@nestjs/config';
+import { WuproyectConfig } from 'src/config/wu-proyect.config';
 
 @Injectable()
 export class ApiService implements OnModuleInit {
   constructor(
     private readonly httpService: HttpService,
     private readonly articlesService: ArticlesService,
-    private readonly configService: ConfigService,
+    private readonly wuproyectConfig: WuproyectConfig,
   ) {}
 
   async onModuleInit() {
@@ -19,7 +20,7 @@ export class ApiService implements OnModuleInit {
   }
 
   getApiData() {
-    const api_url = this.configService.get('EXTERNAL_API_URL');
+    const api_url = this.wuproyectConfig.envConfig.external_api_url;
 
     const data = firstValueFrom(
       this.httpService.get(api_url).pipe(map((response) => response.data.hits)),

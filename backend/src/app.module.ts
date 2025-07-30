@@ -3,18 +3,23 @@ import { ArticlesModule } from './articles/module/articles.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ApiModule } from './api/module/api.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import { WuproyectModule } from './config/wu-proyect.module';
+import { WuproyectConfig } from './config/wu-proyect.config';
+import { WuproyectValidateConfig } from './config/wu-proyect.validate.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      validate: WuproyectValidateConfig,
       isGlobal: true,
     }),
+    WuproyectModule,
     MongooseModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('DATABASE_URL'),
+      useFactory: (wuproyectConfig: WuproyectConfig) => ({
+        uri: wuproyectConfig.envConfig.database_url,
       }),
-      inject: [ConfigService],
+      inject: [WuproyectConfig],
     }),
     ScheduleModule.forRoot(),
     ArticlesModule,

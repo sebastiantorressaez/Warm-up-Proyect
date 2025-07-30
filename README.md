@@ -29,7 +29,6 @@ cd Warm-up-Proyect
 ```
 
 ```bash
-docker network create shared_net # Create this network only if it does not exist
 docker compose up --build
 ```
 
