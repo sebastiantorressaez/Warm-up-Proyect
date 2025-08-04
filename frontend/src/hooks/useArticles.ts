@@ -1,34 +1,44 @@
-// src/hooks/useArticles.ts
-import { useEffect, useState } from "react";
+import { Article } from "@/types/article";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-type Article = {
-  _id: string;
-  story_title: string;
-  author: string;
-  created_at: string;
-};
+export function useGetArticles() {
+  const { data, status } = useQuery({
+    queryKey: ["articles"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles`
+      );
+      const articles = (await res.json()) as Article[];
 
-export function useArticles() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+      return articles.filter(
+        (article) =>
+          (article.story_title || article.title) &&
+          (article.story_url || article.url)
+      );
+    },
+  });
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch("http://localhost:5000/articles");
-        if (!res.ok) throw new Error("Error al obtener artículos");
-        const data = await res.json();
-        setArticles(data);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
+  return { data, status };
+}
+
+export function useDeleteArticle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (objectID: string) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/articles/${objectID}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Error deleting article");
       }
-    }
-
-    fetchData();
-  }, []);
-
-  return { articles, loading, error };
+      return objectID;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+    },
+  });
 }
