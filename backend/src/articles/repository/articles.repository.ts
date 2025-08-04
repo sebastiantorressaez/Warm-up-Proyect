@@ -11,7 +11,10 @@ export class ArticlesRepository {
   ) {}
 
   findAll(): Promise<ArticleDocument[]> {
-    return this.articlesModel.find({ is_deleted: false }).exec();
+    return this.articlesModel
+      .find({ is_deleted: false })
+      .sort({ created_at: -1 })
+      .exec();
   }
 
   findOne(objectID: string): Promise<ArticleDocument | null> {
