@@ -1,6 +1,6 @@
 import {
   IsBoolean,
-  IsDateString,
+  IsDate,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -24,15 +24,15 @@ export class CreateArticleDto {
   @IsNotEmpty()
   story_url: string;
 
-  @IsDateString()
+  @IsDate()
   @IsNotEmpty()
-  created_at: string;
+  created_at: Date;
 
   @IsBoolean()
   @IsOptional()
   is_deleted?: boolean;
 
-  @IsDateString()
+  @IsDate()
   @IsOptional()
-  deleted_at?: string;
+  deleted_at?: Date;
 }
