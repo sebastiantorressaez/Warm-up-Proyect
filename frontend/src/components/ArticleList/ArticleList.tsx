@@ -1,26 +1,26 @@
 import ArticleRow from "../ArticleRow/ArticleRow";
-import { ArticleListProps } from "@/types/article";
+import styles from "./ArticleList.module.css";
+import { useDeleteArticle, useGetArticles } from "@/hooks/useArticles";
 
-export default function ArticleList({
-  articles,
-  onDelete,
-  status,
-}: ArticleListProps) {
+export default function ArticleList() {
+  const { data: articles, status } = useGetArticles();
+  const { mutate: deleteArticle } = useDeleteArticle();
+
   if (status === "pending") return <p>Cargando artículos...</p>;
   if (status === "error") return <p>Error al cargar artículos</p>;
-  if (status === "success" && articles.length === 0) {
+  if (status === "success" && articles!.length === 0) {
     return <p>No hay artículos disponibles.</p>;
   }
 
   return (
-    <>
-      {articles.map((article) => (
+    <div className={styles.list}>
+      {articles?.map((article) => (
         <ArticleRow
           key={article._id}
           {...article}
-          onDelete={() => onDelete(article.objectID)}
+          onDelete={() => deleteArticle(article.objectID)}
         />
       ))}
-    </>
+    </div>
   );
 }
