@@ -21,8 +21,7 @@ export type ArticleRowProps = {
 
 export type DeleteButtonProps = {
   onClick: () => void;
-  className?: string;
-  isLoading?: boolean;
+  className: string;
 };
 
 export type ArticleListProps = {

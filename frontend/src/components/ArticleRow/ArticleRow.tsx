@@ -17,13 +17,13 @@ export default function ArticleRow({
   return (
     <div className={styles.row}>
       <a href={displayUrl} className={styles.link}>
-        <div className={styles.left}>
+        <div className={styles.leftContainer}>
           <span className={styles.title}>{displayTitle}</span>
           <span className={styles.author}>- {author} -</span>
         </div>
         <div className={styles.createdAt}>{formatArticleDate(created_at)}</div>
       </a>
-      <DeleteButton onClick={onDelete} className={styles.visibleOnHover} />
+      <DeleteButton className={styles.visibleOnHover} onClick={onDelete} />
     </div>
   );
 }

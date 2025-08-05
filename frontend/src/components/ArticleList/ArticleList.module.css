@@ -1,5 +1,15 @@
 .list {
   margin-top: 10px;
-  margin-left: 50px; 
+  margin-left: 50px;
   margin-right: 50px;
+}
+
+.message {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
