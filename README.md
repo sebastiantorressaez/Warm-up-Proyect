@@ -5,12 +5,8 @@ This is a practice project for ApplyDigital, focused on building a web applicati
 ## Features
 
 ### Backend
-#### Endpoints
 
-- `GET /articles`: Retrieves all articles stored in the database.
-- `GET /articles/:objectID`: Retrieves a specific article by its objectID.
-- `POST /articles`: Create a new article with the provided data.
-- `DELETE /articles/:objectID`: Marks an article as deleted by updating its status.
+Built with NestJS, the backend handles data management with MongoDB and exposes a REST API for the frontend. It also includes scheduled tasks to fetch and update articles automatically.
 
 ### Frontend
 
@@ -37,15 +33,3 @@ The backend and frontend will be available at:
 Backend: `http://localhost:5000`
 
 Frontend: `http://localhost:5001`
-
-## How to run the test
-
-```bash
-cd backend
-
-# run the unit test for articles
-npm run test
-
-# run the end to end test for articles
-npm run test:e2e
-```
